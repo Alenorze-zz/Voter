@@ -1,25 +1,19 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
+import datetime
 
-Replace this with more appropriate tests for your application.
-"""
-
-import django
+from django.utils import timezone
 from django.test import TestCase
 
-# TODO: Configure your database in settings.py and sync before running tests.
+from .models import Question
 
-class SimpleTest(TestCase):
-    """Tests for the application views."""
 
-    # Django requires an explicit setup() when running tests in PTVS
-    @classmethod
-    def setUpClass(cls):
-        django.setup()
+class QuestionMethodTests(TestCase):
 
-    def test_basic_addition(self):
+    def test_was_published_recently_with_future_question(self):
         """
-        Tests that 1 + 1 always equals 2.
+        was_published_recently() should return False for questions whose
+        pub_date is in the future.
         """
-        self.assertEqual(1 + 1, 2)
+        time = timezone.now() + datetime.timedelta(days=30)
+        future_question = Question(pub_date=time)
+        self.assertEqual(future_question.was_published_recently(), False)
+        
